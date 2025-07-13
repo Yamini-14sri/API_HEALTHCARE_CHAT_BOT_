@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Healthcare AI Chatbot</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <style>
+    body {
+      background: linear-gradient(120deg, #e6d8fc 60%, #d4f0f5 100%);
+      min-height: 100vh;
+      font-family: 'Segoe UI', 'Inter', sans-serif;
+      margin: 0;
+      overflow: hidden;
+    }
+    .topbar {
+      width: 100%;
+      background: #fff;
+      border-bottom: 1px solid #ede7fa;
+      padding: 0 46px;
+      height: 68px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: relative;
+      z-index: 10;
+      box-sizing: border-box;
+    }
+    .topbar .logo {
+      font-weight: bold;
+      font-size: 1.25rem;
+      color: #7b35da;
+      letter-spacing: 2px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .topbar .logo .fa-robot {
+      font-size: 1.35rem;
+    }
+    .topbar .nav-btns {
+      display: flex;
+      gap: 16px;
+    }
+    .topbar .nav-btns button {
+      font-size: 1rem;
+      padding: 8px 26px;
+      border-radius: 22px;
+      background: #7b35da;
+      color: #fff;
+      border: none;
+      font-weight: 600;
+      transition: background .2s;
+      cursor: pointer;
+    }
+    .topbar .nav-btns button:hover {
+      background: #5a25a2;
+    }
+    .main-card {
+      background: #fff;
+      border-radius: 30px;
+      box-shadow: 0 8px 40px #b6b6e066;
+      margin: 48px auto 0 auto;
+      max-width: 1200px;
+      min-height: 76vh;
+      display: flex;
+      flex-direction: row;
+      overflow: visible;
+      position: relative;
+    }
+    .left-section {
+      flex: 1.1;
+      padding: 64px 0 64px 68px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      position: relative;
+      z-index: 2;
+    }
+    .animated-robot {
+      width: 100px;
+      height: 100px;
+      margin-bottom: 30px;
+      margin-top: 10px;
+      align-self: flex-start;
+      display: block;
+    }
+    .main-title {
+      font-size: 2.3rem;
+      font-weight: 700;
+      margin-bottom: 16px;
+      color: #1e1e1e;
+      line-height: 1.2;
+    }
+    .main-desc {
+      font-size: 1.15rem;
+      color: #444;
+      margin-bottom: 22px;
+      max-width: 390px;
+    }
+    .info-card {
+      background: #f8f8ff;
+      border-radius: 16px;
+      padding: 18px 26px;
+      box-shadow: 0 4px 16px #7b35da22;
+      margin-top: 16px;
+      max-width: 370px;
+      color: #333;
+      font-size: 1.05rem;
+    }
+    .info-card ul { margin-top: 8px; padding-left: 18px; }
+    .info-card li { margin-bottom: 8px; }
+    .right-section {
+      flex: 1.7;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      padding: 0 36px 0 0;
+      z-index: 1;
+    }
+    .chat-preview-bg {
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      z-index: 0;
+      border-radius: 30px;
+      background:radial-gradient(circle at 70% 40%, #baf1ed88 0%, #a9bfff44 60%, #fff 100%);
+    }
+    .chat-preview {
+      position: relative;
+      z-index: 1;
+      margin-left: auto;
+      margin-right: 0;
+      width: 420px;
+      min-width: 300px;
+      background: #fff;
+      border-radius: 20px;
+      box-shadow: 0 6px 32px #7b35da33;
+      padding: 0;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      min-height: 330px;
+    }
+    .chat-header {
+      background: #f8f8ff;
+      border-bottom: 1px solid #eee;
+      padding: 18px 18px 12px 18px;
+      font-size: 1.08rem;
+      font-weight: 600;
+      color: #7b35da;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      justify-content: space-between;
+    }
+    .chat-header .fa-robot { font-size: 1.2rem; }
+    .chat-messages {
+      padding: 18px 18px 0 18px;
+      flex: 1;
+      overflow-y: auto;
+      background: none;
+      min-height: 160px;
+      font-size: 1rem;
+      color: #333;
+    }
+    .chat-bubble {
+      background: #f1edff;
+      color: #444;
+      border-radius: 10px;
+      padding: 10px 16px;
+      margin-bottom: 10px;
+      max-width: 80%;
+      font-size: 1rem;
+      box-shadow: 0 2px 8px #7b35da11;
+      display: inline-block;
+    }
+    .chat-bubble.user {
+      background: #fff;
+      color: #7b35da;
+      border: 1.5px solid #d7caff;
+      align-self: flex-end;
+      margin-left: auto;
+      margin-bottom: 0;
+    }
+    .chat-input-area {
+      padding: 14px 18px;
+      border-top: 1px solid #eee;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: #fafaff;
+      border-bottom-left-radius: 20px;
+      border-bottom-right-radius: 20px;
+    }
+    .chat-input-area input {
+      flex: 1;
+      padding: 10px 18px;
+      border-radius: 25px;
+      border: 1px solid #d7caff;
+      background: #fff;
+      color: #444;
+      font-size: 1rem;
+      outline: none;
+    }
+    .chat-input-area button {
+      background: #7b35da;
+      color: #fff;
+      border: none;
+      border-radius: 25px;
+      padding: 8px 18px;
+      font-size: 1.1rem;
+      cursor: pointer;
+      font-weight: 600;
+      transition: background .2s;
+    }
+    .chat-input-area button:hover { background: #5a25a2; }
+    /* Modal style */
+    .auth-modal {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      z-index: 100;
+      background: rgba(255,255,255,0.85);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: opacity .2s;
+    }
+    .auth-card {
+      background: #fff;
+      border-radius: 24px;
+      max-width: 340px;
+      box-shadow: 0 6px 40px #7b35da22;
+      padding: 34px 32px;
+      position: relative;
+      animation: modalIn .2s;
+    }
+    @keyframes modalIn {
+      from { transform: translateY(-40px); opacity: 0;}
+      to   { transform: translateY(0); opacity: 1;}
+    }
+    .auth-card h2 {
+      font-size: 1.6rem;
+      font-weight: 700;
+      margin-bottom: 14px;
+      color: #7b35da;
+      text-align: left;
+    }
+    .auth-card label { font-weight: 500; color: #333; margin-bottom: 6px; display:block;}
+    .auth-card input {
+      width: 100%;
+      padding: 12px;
+      border-radius: 10px;
+      border: 1px solid #d7caff;
+      background: #fafaff;
+      margin-bottom: 18px;
+      font-size: 1rem;
+      color: #444;
+      outline: none;
+    }
+    .auth-card button {
+      background: #7b35da;
+      color: #fff;
+      border: none;
+      border-radius: 25px;
+      font-size: 1.12rem;
+      font-weight: 600;
+      padding: 13px 0;
+      width: 100%;
+      margin-bottom: 8px;
+      transition: background .2s;
+    }
+    .auth-card button:hover { background: #5a25a2; }
+    .auth-switch-link {
+      text-align: center;
+      margin-top: 8px;
+      color: #7b35da;
+      cursor: pointer;
+      font-weight: 500;
+      display: block;
+    }
+    .auth-card .close-btn {
+      position: absolute;
+      top: 18px;
+      right: 18px;
+      background: none;
+      border: none;
+      font-size: 1.3rem;
+      color: #aaa;
+      cursor: pointer;
+      transition: color .2s;
+    }
+    .auth-card .close-btn:hover { color: #7b35da;}
+    @media (max-width: 991px){
+      .main-card { flex-direction: column; min-height: 96vh;}
+      .left-section { padding: 48px 20px 24px 20px;}
+      .right-section { padding: 0 12px; margin-bottom: 28px;}
+      .chat-preview { margin: 0 auto;}
+      .topbar { padding:0 18px;}
+    }
+    @media (max-width: 600px) {
+      .main-card {margin:10px auto; border-radius: 18px;}
+      .left-section { padding: 24px 8px;}
+      .chat-preview { width: 98vw; min-width: unset;}
+      .topbar { padding:0 8px;}
+    }
+  </style>
+</head>
+<body>
+  <!-- Topbar -->
+  <div class="topbar">
+    <div class="logo"><i class="fas fa-robot"></i> HealthBot</div>
+    <div class="nav-btns">
+      <button id="openSignup">Sign Up</button>
+      <button id="openLogin">Login</button>
+    </div>
+  </div>
+  <!-- Main content -->
+  <div class="main-card" id="mainCard">
+    <div class="left-section">
+      <!-- ANIMATED ROBOT SVG -->
+      <svg class="animated-robot" viewBox="0 0 100 100">
+        <ellipse cx="50" cy="54" rx="36" ry="36" fill="#fff" stroke="#7b35da" stroke-width="4"/>
+        <ellipse cx="50" cy="54" rx="28" ry="28" fill="#eaeaff"/>
+        <ellipse cx="38" cy="60" rx="5" ry="5" fill="#7b35da">
+          <animate attributeName="rx" values="5;3;5" dur="2s" repeatCount="indefinite"/>
+        </ellipse>
+        <ellipse cx="62" cy="60" rx="5" ry="5" fill="#7b35da">
+          <animate attributeName="rx" values="5;3;5" dur="2s" repeatCount="indefinite"/>
+        </ellipse>
+        <rect x="46" y="36" width="8" height="10" rx="4" fill="#7b35da">
+          <animate attributeName="y" values="36;30;36" dur="2s" repeatCount="indefinite"/>
+        </rect>
+        <ellipse cx="50" cy="85" rx="20" ry="6" fill="#7b35da" opacity="0.18">
+          <animate attributeName="rx" values="20;24;20" dur="1.6s" repeatCount="indefinite"/>
+        </ellipse>
+      </svg>
+      <div class="main-title">Chat with your AI Healthcare Assistant</div>
+      <div class="main-desc">
+        Instantly get medical advice, tips, and answers to your health questions.<br>
+        Safe, private, and powered by advanced AI.<br>
+        <span style="color:#7b35da;font-weight:500;">Try the chatbot now!</span>
+      </div>
+      <div class="info-card">
+        <strong>Why HealthBot?</strong>
+        <ul>
+          <li>Ask health-related questions in simple language</li>
+          <li>Supports English, Hindi, Telugu</li>
+          <li>Private, secure chat sessions</li>
+          <li>Easy access from any device</li>
+        </ul>
+        <div style="margin-top: 10px; color:#7b35da;font-size:1rem;">
+          <b>Note:</b> For information only.<br>
+          For emergencies, consult a medical professional.
+        </div>
+      </div>
+    </div>
+    <div class="right-section">
+      <div class="chat-preview-bg"></div>
+      <div class="chat-preview">
+        <div class="chat-header">
+          <span><i class="fas fa-robot"></i> Bot name</span>
+          <span>
+            <i class="fas fa-sync-alt" style="cursor:pointer"></i>
+          </span>
+        </div>
+        <div class="chat-messages">
+          <div class="chat-bubble bot"><strong>Bot name</strong><br>Hi, how can I assist you today?</div>
+          <div class="chat-bubble user" style="color:#7b35da; border-color:#7b35da;">What services do you offer?</div>
+        </div>
+        <div class="chat-input-area">
+          <input type="text" placeholder="Type your message..." disabled>
+          <button disabled><i class="fas fa-paper-plane"></i></button>
+        </div>
+      </div>
+    </div>
+    <!-- Modal for Auth (Signup/Login) -->
+    <div class="auth-modal d-none" id="authModal">
+      <div class="auth-card" id="authCard">
+        <button class="close-btn" type="button" id="closeAuth">&times;</button>
+        <form id="signupForm" class="d-none">
+          <h2>Create Account</h2>
+          <label for="signupEmail">Email:</label>
+          <input type="email" id="signupEmail" required>
+          <label for="signupPassword">Password:</label>
+          <input type="password" id="signupPassword" required>
+          <button type="submit">Register</button>
+          <span class="auth-switch-link" id="gotoLogin">Already have an account? Login</span>
+        </form>
+        <form id="loginForm" class="d-none">
+          <h2>Welcome Back</h2>
+          <label for="loginEmail">Email:</label>
+          <input type="email" id="loginEmail" required>
+          <label for="loginPassword">Password:</label>
+          <input type="password" id="loginPassword" required>
+          <button type="submit">Login</button>
+          <span class="auth-switch-link" id="gotoSignup">Don't have an account? Sign Up</span>
+        </form>
+      </div>
+    </div>
+  </div>
+  <script>
+    // Modal/Panel logic
+    const authModal = document.getElementById('authModal');
+    const signupForm = document.getElementById('signupForm');
+    const loginForm = document.getElementById('loginForm');
+    const openSignup = document.getElementById('openSignup');
+    const openLogin = document.getElementById('openLogin');
+    const closeAuth = document.getElementById('closeAuth');
+    const gotoLogin = document.getElementById('gotoLogin');
+    const gotoSignup = document.getElementById('gotoSignup');
+
+    // Show signup modal
+    openSignup.addEventListener('click', function() {
+      authModal.classList.remove('d-none');
+      signupForm.classList.remove('d-none');
+      loginForm.classList.add('d-none');
+    });
+
+    // Show login modal
+    openLogin.addEventListener('click', function() {
+      authModal.classList.remove('d-none');
+      loginForm.classList.remove('d-none');
+      signupForm.classList.add('d-none');
+    });
+
+    // Close modal
+    closeAuth.addEventListener('click', function() {
+      authModal.classList.add('d-none');
+      signupForm.classList.add('d-none');
+      loginForm.classList.add('d-none');
+    });
+
+    // Switch between login/signup in modal
+    gotoLogin.addEventListener('click', function() {
+      signupForm.classList.add('d-none');
+      loginForm.classList.remove('d-none');
+    });
+    gotoSignup.addEventListener('click', function() {
+      loginForm.classList.add('d-none');
+      signupForm.classList.remove('d-none');
+    });
+
+    // Handle signup form submission
+    signupForm.addEventListener('submit', function(e) {
+      e.preventDefault();
+      const email = document.getElementById('signupEmail').value;
+      const password = document.getElementById('signupPassword').value;
+      fetch('{{ url_for("signup") }}', {
+        method: 'POST',
+        headers: {'Content-Type':'application/json'},
+        body: JSON.stringify({ email, password })
+      }).then(resp => resp.json())
+        .then(data => {
+          if (data.status === 'success') {
+            window.location.href = "{{ url_for('chat') }}";
+          } else {
+            alert(data.message || "Signup failed");
+          }
+        }).catch(()=>alert("Signup error"));
+    });
+
+    // Handle login form submission
+    loginForm.addEventListener('submit', function(e) {
+      e.preventDefault();
+      const email = document.getElementById('loginEmail').value;
+      const password = document.getElementById('loginPassword').value;
+      fetch('{{ url_for("login") }}', {
+        method: 'POST',
+        headers: {'Content-Type':'application/json'},
+        body: JSON.stringify({ email, password })
+      }).then(resp => resp.json())
+        .then(data => {
+          if (data.status === 'success') {
+            window.location.href = "{{ url_for('chat') }}";
+          } else {
+            alert(data.message || "Login failed");
+          }
+        }).catch(()=>alert("Login error"));
+    });
+  </script>
+</body>
+</html>

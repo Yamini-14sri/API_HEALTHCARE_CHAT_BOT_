@@ -1,0 +1,40 @@
+2025-07-12 01:54:36,804 - __main__ - INFO - 🔄 Starting connection tests...
+2025-07-12 01:54:37,825 - __main__ - INFO - ✅ MongoDB connection and operations test passed
+2025-07-12 01:54:38,090 - __main__ - INFO - ✅ OpenRouter API connection test passed
+2025-07-12 01:54:38,092 - __main__ - INFO - ✅ File permissions test passed
+2025-07-12 01:54:38,095 - __main__ - INFO - 
+=== Test Results Summary ===
+2025-07-12 01:54:38,095 - __main__ - INFO - mongodb: ✅ PASSED
+2025-07-12 01:54:38,095 - __main__ - INFO - openrouter: ✅ PASSED
+2025-07-12 01:54:38,096 - __main__ - INFO - file_permissions: ✅ PASSED
+2025-07-12 01:54:38,096 - __main__ - INFO - 🎉 All connection tests passed!
+2025-07-12 01:57:51,571 - __main__ - INFO - 🔄 Starting connection tests...
+2025-07-12 01:57:52,438 - __main__ - INFO - ✅ MongoDB connection and operations test passed
+2025-07-12 01:57:52,679 - __main__ - INFO - ✅ OpenRouter API connection test passed
+2025-07-12 01:57:52,700 - __main__ - INFO - ✅ File permissions test passed
+2025-07-12 01:57:52,701 - __main__ - INFO - 
+=== Test Results Summary ===
+2025-07-12 01:57:52,704 - __main__ - INFO - mongodb: ✅ PASSED
+2025-07-12 01:57:52,715 - __main__ - INFO - openrouter: ✅ PASSED
+2025-07-12 01:57:52,730 - __main__ - INFO - file_permissions: ✅ PASSED
+2025-07-12 01:57:52,731 - __main__ - INFO - 🎉 All connection tests passed!
+2025-07-12 18:15:39,056 - __main__ - INFO - 🔄 Starting connection tests...
+2025-07-12 18:15:40,144 - __main__ - INFO - ✅ MongoDB connection and operations test passed
+2025-07-12 18:15:40,527 - __main__ - INFO - ✅ OpenRouter API connection test passed
+2025-07-12 18:15:40,529 - __main__ - INFO - ✅ File permissions test passed
+2025-07-12 18:15:40,530 - __main__ - INFO - 
+=== Test Results Summary ===
+2025-07-12 18:15:40,530 - __main__ - INFO - mongodb: ✅ PASSED
+2025-07-12 18:15:40,531 - __main__ - INFO - openrouter: ✅ PASSED
+2025-07-12 18:15:40,531 - __main__ - INFO - file_permissions: ✅ PASSED
+2025-07-12 18:15:40,531 - __main__ - INFO - 🎉 All connection tests passed!
+2025-07-12 23:25:20,433 - __main__ - INFO - 🔄 Starting connection tests...
+2025-07-12 23:25:22,772 - __main__ - INFO - ✅ MongoDB connection and operations test passed
+2025-07-12 23:25:23,531 - __main__ - INFO - ✅ OpenRouter API connection test passed
+2025-07-12 23:25:23,534 - __main__ - INFO - ✅ File permissions test passed
+2025-07-12 23:25:23,535 - __main__ - INFO - 
+=== Test Results Summary ===
+2025-07-12 23:25:23,535 - __main__ - INFO - mongodb: ✅ PASSED
+2025-07-12 23:25:23,535 - __main__ - INFO - openrouter: ✅ PASSED
+2025-07-12 23:25:23,535 - __main__ - INFO - file_permissions: ✅ PASSED
+2025-07-12 23:25:23,536 - __main__ - INFO - 🎉 All connection tests passed!

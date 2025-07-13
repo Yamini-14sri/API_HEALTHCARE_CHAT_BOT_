@@ -1,0 +1,547 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Voice Chat - Health Bot</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.css" rel="stylesheet">
+    <style>
+        /* Inherit main dark theme */
+        body {
+            margin: 0;
+            display: flex;
+            font-family: Arial, sans-serif;
+            background: #0a1422;
+        }
+        
+        /* Updated Sidebar Styles */
+        .sidebar {
+            width: 250px;
+            background: #0e1c36;
+            color: white;
+            padding: 20px;
+            height: 100vh;
+            overflow-y: auto;
+            transition: transform 0.3s ease;
+            position: fixed;
+            left: 0;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .sidebar.closed {
+            transform: translateX(-250px);
+        }
+
+        .sidebar h3 {
+            margin-top: 0;
+            color: #f0f0f0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #1e2d4d;
+        }
+
+        .session {
+            padding: 12px;
+            background: #1e2d4d;
+            margin-bottom: 8px;
+            border-radius: 5px;
+            font-size: 14px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .session:hover {
+            background: #2a3d63;
+            transform: translateX(5px);
+        }
+
+        .session .delete-btn {
+            color: #ff4444;
+            opacity: 0.7;
+            padding: 5px;
+            transition: all 0.3s ease;
+        }
+
+        .session .delete-btn:hover {
+            opacity: 1;
+            transform: scale(1.1);
+        }
+
+        .sidebar-link {
+            display: flex;
+            align-items: center;
+            color: white;
+            text-decoration: none;
+            padding: 12px;
+            margin: 5px 0;
+            border-radius: 5px;
+            transition: all 0.3s ease;
+        }
+
+        .sidebar-link i {
+            margin-right: 10px;
+            width: 20px;
+            text-align: center;
+        }
+
+        .sidebar-link:hover {
+            background: #2a3d63;
+            transform: translateX(5px);
+        }
+
+        .sidebar-divider {
+            height: 1px;
+            background: #1e2d4d;
+            margin: 15px 0;
+        }
+
+        /* Update toggle button styles */
+        .toggle-sidebar {
+            position: fixed;
+            left: 250px;
+            top: 20px;
+            background: #2a3d63;
+            color: white;
+            border: none;
+            padding: 12px;
+            cursor: pointer;
+            border-radius: 0 5px 5px 0;
+            transition: all 0.3s ease;
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+            width: 35px;
+            height: 35px;
+        }
+
+        .toggle-sidebar:hover {
+            background: #3a4d73;
+        }
+
+        .toggle-sidebar.closed {
+            left: 0;
+        }
+
+        .toggle-sidebar .toggle-icon {
+            width: 16px;
+            height: 16px;
+            border: 3px solid #7cb3ff;
+            border-radius: 2px;
+            background: #2a3d63;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .toggle-sidebar .toggle-icon:after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 8px;
+            height: 8px;
+            background: #7cb3ff;
+            border-radius: 1px;
+        }
+
+        .toggle-sidebar:hover .toggle-icon {
+            border-color: #ffffff;
+        }
+
+        .toggle-sidebar:hover .toggle-icon:after {
+            background: #ffffff;
+        }
+
+        .toggle-sidebar.closed .toggle-icon {
+            transform: rotate(180deg);
+            border-color: #ff7c7c;
+        }
+
+        .toggle-sidebar.closed .toggle-icon:after {
+            background: #ff7c7c;
+        }
+
+        .toggle-sidebar.closed:hover .toggle-icon {
+            border-color: #ffffff;
+        }
+
+        .toggle-sidebar.closed:hover .toggle-icon:after {
+            background: #ffffff;
+        }
+
+        /* Update main content styles */
+        .main {
+            flex: 1;
+            margin-left: 250px;
+            transition: all 0.3s ease;
+            min-height: 100vh;
+            background: #121f38;
+            padding: 20px;
+            width: calc(100% - 250px);
+        }
+
+        .main.full {
+            margin-left: 0;
+            width: 100%;
+        }
+
+        .voice-container {
+            text-align: center;
+            padding: 40px;
+            background: #121f38;
+            border-radius: 20px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            max-width: 600px;
+            width: 100%;
+        }
+
+        .mic-button {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background: #2a3d63;
+            border: none;
+            color: #7cb3ff;
+            font-size: 40px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin: 30px 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        .mic-button:hover {
+            transform: scale(1.05);
+            background: #3a4d73;
+        }
+
+        .mic-button.recording {
+            background: #ff4444;
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        .voice-status {
+            color: #7cb3ff;
+            margin: 20px 0;
+            font-size: 1.2em;
+            min-height: 30px;
+        }
+
+        .voice-waves {
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 3px;
+            margin: 20px 0;
+        }
+
+        .wave {
+            width: 3px;
+            background: #7cb3ff;
+            border-radius: 3px;
+            transition: height 0.1s ease;
+        }
+
+        .chat-history {
+            margin-top: 30px;
+            width: 100%;
+            max-height: 300px;
+            overflow-y: auto;
+            padding: 20px;
+            background: #1e2d4d;
+            border-radius: 10px;
+        }
+
+        .message {
+            margin: 10px 0;
+            padding: 10px;
+            border-radius: 10px;
+            color: white;
+        }
+
+        .message.user {
+            background: #2a3d63;
+            margin-left: auto;
+            text-align: right;
+        }
+
+        .message.bot {
+            background: #1e2d4d;
+            border: 1px solid #2a3d63;
+        }
+
+        .message-time {
+            font-size: 0.8em;
+            color: #7a8ca5;
+            margin-top: 5px;
+        }
+
+        .welcome-text {
+            color: #e8f1ff;
+            font-size: 1.5em;
+            margin-bottom: 20px;
+        }
+
+        /* Scrollbar styling */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #121f38;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #1e2d4d;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #2a3d63;
+        }
+    </style>
+</head>
+<body>
+    <button class="toggle-sidebar" onclick="toggleSidebar()">
+        <div class="toggle-icon"></div>
+    </button>
+
+    <div class="sidebar" id="sidebar">
+        <h3>
+            Chat History
+            <a href="{{ url_for('new_chat') }}" class="sidebar-link">
+                <i class="fas fa-plus"></i>
+            </a>
+        </h3>
+        
+        {% for session in sessions %}
+            <div class="session" onclick="window.location.href='{{ url_for('load_chat', session_id=session._id) }}'">
+                <span>{{ session.name }}</span>
+                <a href="{{ url_for('delete_chat', session_id=session._id) }}" 
+                   class="delete-btn"
+                   onclick="event.stopPropagation(); return confirm('Are you sure you want to delete this chat?');">
+                    <i class="fas fa-trash"></i>
+                </a>
+            </div>
+        {% endfor %}
+
+        <div class="sidebar-divider"></div>
+        
+        <a href="{{ url_for('voice_chat') }}" class="sidebar-link">
+            <i class="fas fa-microphone"></i>
+            Voice Chat
+        </a>
+        
+        <a href="{{ url_for('chat') }}" class="sidebar-link">
+            <i class="fas fa-comments"></i>
+            Text Chat
+        </a>
+        
+        <div class="sidebar-divider"></div>
+        
+        <a href="{{ url_for('logout') }}" class="sidebar-link">
+            <i class="fas fa-sign-out-alt"></i>
+            Logout
+        </a>
+    </div>
+
+    <div class="main" id="main">
+        <div class="voice-container">
+            <div class="welcome-text">Ask me anything freely</div>
+            
+            <button class="mic-button" id="micButton">
+                <i class="fas fa-microphone"></i>
+            </button>
+            
+            <div class="voice-status" id="status"></div>
+            
+            <div class="voice-waves" id="voiceWaves">
+                <!-- Voice waves will be added dynamically -->
+            </div>
+
+            <div class="chat-history" id="chatHistory">
+                <!-- Messages will appear here -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Sidebar toggle functionality with localStorage
+        const sidebar = document.getElementById('sidebar');
+        const main = document.getElementById('main');
+        const toggleBtn = document.querySelector('.toggle-sidebar');
+
+        // Check initial state from localStorage
+        if (localStorage.getItem('sidebarClosed') === 'true') {
+            sidebar.classList.add('closed');
+            main.classList.add('full');
+            toggleBtn.classList.add('closed');
+        }
+
+        function toggleSidebar() {
+            sidebar.classList.toggle('closed');
+            main.classList.toggle('full');
+            toggleBtn.classList.toggle('closed');
+            
+            // Save state to localStorage
+            localStorage.setItem('sidebarClosed', sidebar.classList.contains('closed'));
+        }
+
+        // Handle window resize
+        function handleResize() {
+            if (window.innerWidth <= 768 && !sidebar.classList.contains('closed')) {
+                toggleSidebar();
+            }
+        }
+
+        // Add resize listener
+        window.addEventListener('resize', handleResize);
+
+        // Initial check
+        handleResize();
+
+        // Voice recognition setup
+        const micButton = document.getElementById('micButton');
+        const status = document.getElementById('status');
+        const chatHistory = document.getElementById('chatHistory');
+        const voiceWaves = document.getElementById('voiceWaves');
+
+        // Create voice wave elements
+        for (let i = 0; i < 20; i++) {
+            const wave = document.createElement('div');
+            wave.className = 'wave';
+            wave.style.height = '5px';
+            voiceWaves.appendChild(wave);
+        }
+
+        function updateWaves(isRecording) {
+            if (isRecording) {
+                const waves = document.querySelectorAll('.wave');
+                waves.forEach(wave => {
+                    const height = Math.random() * 50 + 5;
+                    wave.style.height = `${height}px`;
+                });
+                waveAnimation = requestAnimationFrame(() => updateWaves(true));
+            }
+        }
+
+        if ('webkitSpeechRecognition' in window) {
+            const recognition = new webkitSpeechRecognition();
+            recognition.continuous = false;
+            recognition.interimResults = true;
+            recognition.lang = 'en-US';
+
+            let waveAnimation;
+            let isListening = false;
+
+            recognition.onstart = function() {
+                micButton.classList.add('recording');
+                status.textContent = "Recognizing your voice...";
+                updateWaves(true);
+                isListening = true;
+            };
+
+            recognition.onresult = function(event) {
+                const result = event.results[0][0].transcript;
+                if (event.results[0].isFinal) {
+                    status.textContent = "Processing your message...";
+                    
+                    // Add user message
+                    const time = new Date().toLocaleTimeString();
+                    const userMessage = document.createElement('div');
+                    userMessage.className = 'message user';
+                    userMessage.innerHTML = `
+                        ${result}
+                        <div class="message-time">${time}</div>
+                    `;
+                    chatHistory.appendChild(userMessage);
+                    chatHistory.scrollTop = chatHistory.scrollHeight;
+
+                    // Send to server and get response
+                    fetch('/voice_chat', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({ message: result })
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.status === 'success') {
+                            const botMessage = document.createElement('div');
+                            botMessage.className = 'message bot';
+                            botMessage.innerHTML = `
+                                ${data.response}
+                                <div class="message-time">${new Date().toLocaleTimeString()}</div>
+                            `;
+                            chatHistory.appendChild(botMessage);
+                            chatHistory.scrollTop = chatHistory.scrollHeight;
+                            status.textContent = "Click the microphone to speak";
+                        } else {
+                            status.textContent = "Error: " + (data.message || "Failed to get response");
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        status.textContent = "Error occurred while processing message";
+                    });
+                } else {
+                    // Show interim results
+                    status.textContent = "I heard: " + result;
+                }
+            };
+
+            recognition.onerror = function(event) {
+                console.error('Speech recognition error:', event.error);
+                status.textContent = "Error: " + event.error;
+                micButton.classList.remove('recording');
+                cancelAnimationFrame(waveAnimation);
+                const waves = document.querySelectorAll('.wave');
+                waves.forEach(wave => wave.style.height = '5px');
+                isListening = false;
+            };
+
+            recognition.onend = function() {
+                micButton.classList.remove('recording');
+                if (!status.textContent.startsWith("Error") && !status.textContent.startsWith("Processing")) {
+                    status.textContent = "Click the microphone to speak";
+                }
+                cancelAnimationFrame(waveAnimation);
+                const waves = document.querySelectorAll('.wave');
+                waves.forEach(wave => wave.style.height = '5px');
+                isListening = false;
+            };
+
+            micButton.addEventListener('click', function() {
+                if (!isListening) {
+                    try {
+                        recognition.start();
+                    } catch (error) {
+                        console.error('Speech recognition error:', error);
+                        status.textContent = "Error starting recognition. Please try again.";
+                    }
+                } else {
+                    recognition.stop();
+                }
+            });
+        } else {
+            micButton.style.display = 'none';
+            status.textContent = "Voice recognition is not supported in your browser. Please use Chrome or Edge.";
+        }
+    </script>
+</body>
+</html> 
